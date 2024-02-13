@@ -69,6 +69,8 @@ const Post = () => {
                                                 alt={'image'}
                                                 width={800}
                                                 height={600}
+                                                priority={false}
+                                                placeholder='empty'
                                             />
                                         </CardContent>
                                     </Card>
