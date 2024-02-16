@@ -36,7 +36,7 @@ const GoogleBtn = ({ text, icon }: GoogleBtnProps) => {
         method: 'post',
         body: {},
         onSuccess: () => {
-            router.push('/home');
+            router.push('/');
         },
     });
 
