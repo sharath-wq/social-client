@@ -1,3 +1,10 @@
+'use client';
+
+import { string, z } from 'zod';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+
 import {
     Dialog,
     DialogContent,
@@ -7,11 +14,27 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { EditProfileValiation } from '@/lib/validation';
+import { Textarea } from '@/components/ui/textarea';
 
 const EditProfile = () => {
+    // 1. Define your form.
+    const form = useForm<z.infer<typeof EditProfileValiation>>({
+        resolver: zodResolver(EditProfileValiation),
+        defaultValues: {
+            username: '',
+        },
+    });
+
+    // 2. Define a submit handler.
+    function onSubmit(values: z.infer<typeof EditProfileValiation>) {
+        // Do something with the form values.
+        // ✅ This will be type-safe and validated.
+        console.log(values);
+    }
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -22,23 +45,57 @@ const EditProfile = () => {
                     <DialogTitle>Edit profile</DialogTitle>
                     <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
                 </DialogHeader>
-                <div className='grid gap-4 py-4'>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label htmlFor='name' className='text-right'>
-                            Name
-                        </Label>
-                        <Input id='name' value='Pedro Duarte' className='col-span-3' />
-                    </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label htmlFor='username' className='text-right'>
-                            Username
-                        </Label>
-                        <Input id='username' value='@peduarte' className='col-span-3' />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button type='submit'>Save changes</Button>
-                </DialogFooter>
+
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className='grid gap-4 py-4'>
+                        <FormField
+                            control={form.control}
+                            name='fullName'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Full Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder='Full Name' type='text' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name='username'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Username</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder='Username' type='text' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name='bio'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Bio</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder='A little bit about yourself'
+                                            className='resize-none'
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <DialogFooter>
+                            <Button type='submit'>Save changes</Button>
+                        </DialogFooter>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     );

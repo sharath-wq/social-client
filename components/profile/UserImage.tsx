@@ -8,10 +8,12 @@ type UserImageProps = {
 
 const UserImage = ({ username, imageUrl }: UserImageProps) => {
     return (
-        <Avatar className='w-full h-full'>
-            <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
-            <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <div className='w-full h-full'>
+            <Avatar className='w-full h-full'>
+                <AvatarImage src={imageUrl} alt='@shadcn' className='w-full h-full object-cover' />
+                <AvatarFallback>{username[0]}</AvatarFallback>
+            </Avatar>
+        </div>
     );
 };
 
