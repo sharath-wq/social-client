@@ -42,7 +42,7 @@ const ProfilePage = () => {
             <div className='w-3/4 flex flex-col gap-10'>
                 {userData ? <ProfileHeader {...userData} /> : <ProfileHeaderSkelton />}
                 <Separator className='my-4' />
-                {userPostsData.length ? <UserPosts posts={userPostsData} /> : <PostsGridSkeleton />}
+                {userPostsData ? <UserPosts posts={userPostsData} /> : <PostsGridSkeleton />}
             </div>
         </div>
     );

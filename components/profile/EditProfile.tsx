@@ -24,6 +24,7 @@ import { useState } from 'react';
 import { toast } from '../ui/use-toast';
 import { useUser } from '@/context/userContext';
 import { ButtonLoading } from '../button/LoadingButton';
+import { useRouter } from 'next/navigation';
 
 type EditProfilePorps = {
     email: string;
@@ -35,7 +36,7 @@ type EditProfilePorps = {
 const EditProfile = ({ username, bio, fullName, email }: EditProfilePorps) => {
     const [isSubmiting, setIsSubmiting] = useState(false);
 
-    const { currentUser } = useUser();
+    const { currentUser, getCurrentUser } = useUser();
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof EditProfileValiation>>({
@@ -63,6 +64,7 @@ const EditProfile = ({ username, bio, fullName, email }: EditProfilePorps) => {
             toast({
                 description: 'Profile Updated',
             });
+            getCurrentUser();
         },
     });
 
