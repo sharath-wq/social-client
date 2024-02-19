@@ -7,13 +7,22 @@ import EditProfile from '@/components/profile/EditProfile';
 type ProfileHeaderProps = {
     imageUrl: string;
     username: string;
+    fullName: string;
     bio: string;
     posts: string[];
     following: string[];
     followers: string[];
+    email: string;
 };
 
-const ProfileHeader = ({ username, imageUrl, bio, posts, followers, following }: ProfileHeaderProps) => {
+const ProfileHeader = ({ username, imageUrl, fullName, bio, posts, followers, following, email }: ProfileHeaderProps) => {
+    const editUserData = {
+        username,
+        bio,
+        fullName,
+        email,
+    };
+
     return (
         <div className='flex p-4 shadow-md'>
             <div className='flex items-center'>
@@ -23,12 +32,13 @@ const ProfileHeader = ({ username, imageUrl, bio, posts, followers, following }:
             <div className='flex flex-col ml-20 gap-5 mt-6'>
                 <div className='flex flex-col md:flex-row gap-5 items-center'>
                     <h1 className='text-2xl font-bold mb-2 md:mb-0'>{username}</h1>
-                    <EditProfile />
+                    <EditProfile {...editUserData} />
 
                     <Button variant={'secondary'}>
                         <Settings />
                     </Button>
                 </div>
+                <span className='text-md font-normal mb-2 md:mb-0'>{fullName}</span>
 
                 <div className='flex flex-wrap md:flex-nowrap gap-4'>
                     <div className='text-center mb-2 md:mb-0'>

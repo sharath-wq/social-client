@@ -19,22 +19,53 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { EditProfileValiation } from '@/lib/validation';
 import { Textarea } from '@/components/ui/textarea';
+import useRequest from '@/hooks/useRequest';
+import { useState } from 'react';
+import { toast } from '../ui/use-toast';
+import { useUser } from '@/context/userContext';
+import { ButtonLoading } from '../button/LoadingButton';
 
-const EditProfile = () => {
+type EditProfilePorps = {
+    email: string;
+    username: string;
+    bio: string;
+    fullName: string;
+};
+
+const EditProfile = ({ username, bio, fullName, email }: EditProfilePorps) => {
+    const [isSubmiting, setIsSubmiting] = useState(false);
+
+    const { currentUser } = useUser();
+
     // 1. Define your form.
     const form = useForm<z.infer<typeof EditProfileValiation>>({
         resolver: zodResolver(EditProfileValiation),
         defaultValues: {
-            username: '',
+            email: email,
+            username: username,
+            bio: bio,
+            fullName: fullName,
         },
     });
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof EditProfileValiation>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+        setIsSubmiting(true);
+        doRequest(values);
     }
+
+    const { doRequest, errors } = useRequest({
+        url: `/api/users/${currentUser?.userId}`,
+        method: 'patch',
+        body: {},
+        onSuccess: () => {
+            setIsSubmiting(false);
+            toast({
+                description: 'Profile Updated',
+            });
+        },
+    });
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -42,12 +73,26 @@ const EditProfile = () => {
             </DialogTrigger>
             <DialogContent className='sm:max-w-[425px]'>
                 <DialogHeader>
+                    {errors}
                     <DialogTitle>Edit profile</DialogTitle>
                     <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className='grid gap-4 py-4'>
+                        <FormField
+                            control={form.control}
+                            name='email'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input disabled placeholder='Email' type='text' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name='fullName'
@@ -92,7 +137,7 @@ const EditProfile = () => {
                             )}
                         />
                         <DialogFooter>
-                            <Button type='submit'>Save changes</Button>
+                            {isSubmiting ? <ButtonLoading /> : <Button type='submit'>Save changes</Button>}
                         </DialogFooter>
                     </form>
                 </Form>
