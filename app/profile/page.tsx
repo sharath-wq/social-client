@@ -8,31 +8,8 @@ import axios, { AxiosError } from 'axios';
 import { useUser } from '@/context/userContext';
 import ProfileHeaderSkelton from '@/components/Skeltons/profile/ProfileHeaderSkelton';
 import PostsGridSkeleton from '@/components/Skeltons/profile/PostsGridSkelton';
-
-type UserData = {
-    createdAt: string;
-    email: string;
-    fullName: string;
-    id: string;
-    imageUrl: string;
-    isAdmin: boolean;
-    username: string;
-};
-
-type UserPostData = {
-    id: string;
-    author: {
-        userId: string;
-        username: string;
-        imageUrl: string;
-    };
-    caption: string;
-    tags: string[];
-    imageUrls: string[];
-    likes: string[];
-    comments: string[];
-    createdAt: Date;
-};
+import { UserData } from '@/types/user';
+import { UserPostData } from '@/types/post';
 
 const ProfilePage = () => {
     const [userData, setUserData] = useState<UserData>();
