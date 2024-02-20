@@ -24,7 +24,6 @@ import { useState } from 'react';
 import { toast } from '../ui/use-toast';
 import { useUser } from '@/context/userContext';
 import { ButtonLoading } from '../button/LoadingButton';
-import { useRouter } from 'next/navigation';
 
 type EditProfilePorps = {
     email: string;

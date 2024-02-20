@@ -13,7 +13,7 @@ import { UserPostData } from '@/types/post';
 
 const ProfilePage = () => {
     const [userData, setUserData] = useState<UserData>();
-    const [userPostsData, setuserPostsData] = useState<UserPostData[] | []>([]);
+    const [userPostsData, setuserPostsData] = useState<UserPostData[] | null>(null);
 
     const { currentUser } = useUser();
 
