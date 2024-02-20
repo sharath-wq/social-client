@@ -17,6 +17,15 @@ const ProfilePage = () => {
 
     const { currentUser } = useUser();
 
+    const fetchUserPosts = async () => {
+        try {
+            const { data } = await axios.get(`/api/posts/user/${currentUser!.userId}/`);
+            setuserPostsData(data);
+        } catch (e) {
+            const error = e as AxiosError;
+        }
+    };
+
     useEffect(() => {
         (async () => {
             try {
@@ -27,14 +36,7 @@ const ProfilePage = () => {
             }
         })();
 
-        (async () => {
-            try {
-                const { data } = await axios.get(`/api/posts/user/${currentUser!.userId}/`);
-                setuserPostsData(data);
-            } catch (e) {
-                const error = e as AxiosError;
-            }
-        })();
+        fetchUserPosts();
     }, [currentUser]);
 
     return (
@@ -42,7 +44,11 @@ const ProfilePage = () => {
             <div className='w-3/4 flex flex-col gap-10'>
                 {userData ? <ProfileHeader {...userData} /> : <ProfileHeaderSkelton />}
                 <Separator className='my-4' />
-                {userPostsData ? <UserPosts posts={userPostsData} /> : <PostsGridSkeleton />}
+                {userPostsData ? (
+                    <UserPosts fetchUserPosts={fetchUserPosts} posts={userPostsData} />
+                ) : (
+                    <PostsGridSkeleton />
+                )}
             </div>
         </div>
     );

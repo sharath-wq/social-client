@@ -24,7 +24,7 @@ const ProfileHeader = ({ username, imageUrl, fullName, bio, posts, followers, fo
     };
 
     return (
-        <div className='flex p-4 shadow-md'>
+        <div className='flex p-4'>
             <div className='flex items-center'>
                 <UserImage username={username} imageUrl={imageUrl} />
             </div>

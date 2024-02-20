@@ -18,14 +18,22 @@ type posts = {
 
 type UserPostsProps = {
     posts: posts[];
+    fetchUserPosts: () => void;
 };
 
-const UserPosts = ({ posts }: UserPostsProps) => {
+const UserPosts = ({ posts, fetchUserPosts }: UserPostsProps) => {
     return (
         <div className='container mx-auto mt-8'>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                 {posts && posts.length ? (
-                    posts.map((post) => <SinglePost key={post.id} imageUrl={post.imageUrls[0]} />)
+                    posts.map((post) => (
+                        <SinglePost
+                            id={post.id}
+                            fetchUserPosts={fetchUserPosts}
+                            key={post.id}
+                            imageUrl={post.imageUrls[0]}
+                        />
+                    ))
                 ) : (
                     <p>No Posts</p>
                 )}
