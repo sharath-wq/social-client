@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import useRequest from '@/hooks/useRequest';
 import { toast } from '../ui/use-toast';
+import Link from 'next/link';
 
 const SinglePost = ({ imageUrl, id, fetchUserPosts }: { imageUrl: string; id: string; fetchUserPosts: () => void }) => {
     const handleDelete = (e: React.MouseEvent) => {
@@ -63,6 +64,9 @@ const SinglePost = ({ imageUrl, id, fetchUserPosts }: { imageUrl: string; id: st
                     </AlertDialog>
                 </ContextMenuItem>
                 <ContextMenuItem inset>Share</ContextMenuItem>
+                <ContextMenuItem inset>
+                    <Link href={`/post/${id}`}>Edit</Link>
+                </ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
     );
