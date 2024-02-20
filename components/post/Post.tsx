@@ -11,22 +11,42 @@ import {
 import { Button } from '@/components/ui/button';
 import { Bookmark, Heart, MessageCircle, MoreVertical, Send } from 'lucide-react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../ui/carousel';
-import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
-import { PostData } from '@/types/post';
+import { PostProps } from '@/types/post';
+import { useUser } from '@/context/userContext';
+import useRequest from '@/hooks/useRequest';
+import { toast } from '../ui/use-toast';
 
-const Post = ({ authorId, caption, comments, createdAt, id, imageUrls, likes, tags }: PostData) => {
+const Post = ({ author, caption, comments, createdAt, id, imageUrls, likes, tags, getData }: PostProps) => {
+    const { currentUser } = useUser();
+
+    const handleDelete = () => {
+        doRequest();
+    };
+
+    const { doRequest, errors } = useRequest({
+        url: `/api/posts/${id}`,
+        method: 'delete',
+        body: {},
+        onSuccess: () => {
+            toast({
+                description: 'Post Deleted',
+            });
+            getData();
+        },
+    });
+
     return (
         <Card>
             <CardHeader>
                 <div className='flex justify-between'>
                     <div className='flex gap-4'>
                         <Avatar>
-                            <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
+                            <AvatarImage src={author.imageUrl} alt={author.username} />
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                         <div>
-                            <CardTitle>User</CardTitle>
+                            <CardTitle>{author.username}</CardTitle>
                             <CardDescription>Just Now</CardDescription>
                         </div>
                     </div>
@@ -46,6 +66,13 @@ const Post = ({ authorId, caption, comments, createdAt, id, imageUrls, likes, ta
                                     <DropdownMenuItem>
                                         <span className='text-red-500'>Unfollow</span>
                                     </DropdownMenuItem>
+                                    {currentUser?.userId === author.userId && (
+                                        <DropdownMenuItem>
+                                            <span onClick={handleDelete} className='text-red-500'>
+                                                Delete
+                                            </span>
+                                        </DropdownMenuItem>
+                                    )}
                                     <DropdownMenuItem>
                                         <span>Copy Link</span>
                                     </DropdownMenuItem>
@@ -63,13 +90,10 @@ const Post = ({ authorId, caption, comments, createdAt, id, imageUrls, likes, ta
                                 <div className='p-1'>
                                     <Card>
                                         <CardContent className='flex aspect-square items-center justify-center p-6'>
-                                            <Image
+                                            <img
                                                 src={imageUrls[index]}
-                                                alt={'image'}
-                                                width={800}
-                                                height={600}
-                                                priority={false}
-                                                placeholder='empty'
+                                                alt={`image-${index}`}
+                                                style={{ objectFit: 'contain', width: '100%', height: '100%' }}
                                             />
                                         </CardContent>
                                     </Card>

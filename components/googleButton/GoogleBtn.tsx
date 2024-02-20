@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 import { UserAuth } from '@/context/authContext';
 import useRequest from '@/hooks/useRequest';
+import { useUser } from '@/context/userContext';
 
 type GoogleBtnProps = {
     text: string;
@@ -31,11 +32,14 @@ const GoogleBtn = ({ text, icon }: GoogleBtnProps) => {
         }
     };
 
+    const { getCurrentUser } = useUser();
+
     const { doRequest, errors } = useRequest({
         url: '/api/users/google',
         method: 'post',
         body: {},
         onSuccess: () => {
+            getCurrentUser();
             router.push('/home');
         },
     });
