@@ -10,11 +10,13 @@ import ProfileHeaderSkelton from '@/components/Skeltons/profile/ProfileHeaderSke
 import PostsGridSkeleton from '@/components/Skeltons/profile/PostsGridSkelton';
 import { UserData } from '@/types/user';
 import { UserPostData } from '@/types/post';
+import { useRouter } from 'next/navigation';
 
 const ProfilePage = () => {
     const [userData, setUserData] = useState<UserData>();
     const [userPostsData, setuserPostsData] = useState<UserPostData[] | null>(null);
 
+    const router = useRouter();
     const { currentUser } = useUser();
 
     const fetchUserPosts = async () => {
@@ -25,6 +27,14 @@ const ProfilePage = () => {
             const error = e as AxiosError;
         }
     };
+
+    useEffect(() => {
+        if (!currentUser) {
+            router.push('/auth/login');
+        } else {
+            router.push('/profile');
+        }
+    }, [currentUser, router]);
 
     useEffect(() => {
         (async () => {
