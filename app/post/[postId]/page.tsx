@@ -1,12 +1,8 @@
 'use client';
 
 import EditPostForm from '@/components/editPostForm/EditPostForm';
-import PostForm from '@/components/postForm/PostForm';
-import { PostData } from '@/types/post';
-import axios, { AxiosError } from 'axios';
 import { SquarePen } from 'lucide-react';
-import { useParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 const EditPost = () => {
     return (
