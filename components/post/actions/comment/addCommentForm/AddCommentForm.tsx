@@ -8,34 +8,46 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
+import useRequest from '@/hooks/useRequest';
+import { toast } from '@/components/ui/use-toast';
+import { usePost } from '@/context/postContext';
 
-const formSchema = z.object({
-    username: z.string().min(2, {
-        message: 'Username must be at least 2 characters.',
-    }),
+const commentSchema = z.object({
+    content: z.string().min(2),
 });
 
-const AddCommentForm = () => {
-    // 1. Define your form.
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+const AddCommentForm = ({ postId, getComments }: { postId: string; getComments: () => void }) => {
+    const form = useForm<z.infer<typeof commentSchema>>({
+        resolver: zodResolver(commentSchema),
         defaultValues: {
-            username: '',
+            content: '',
         },
     });
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+    function onSubmit(values: z.infer<typeof commentSchema>) {
+        doRequest(values);
     }
+
+    const { doRequest, errors } = useRequest({
+        url: `/api/comments/${postId}`,
+        method: 'post',
+        body: {},
+        onSuccess: () => {
+            toast({
+                description: 'Comment Added',
+            });
+            form.setValue('content', '');
+            getComments();
+        },
+    });
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 relative'>
                 <FormField
                     control={form.control}
-                    name='username'
+                    name='content'
                     render={({ field }) => (
                         <FormItem className='relative flex items-center'>
                             <FormControl className='flex-1'>

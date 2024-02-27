@@ -12,6 +12,7 @@ import axios, { AxiosError } from 'axios';
 import { CommentResponse } from '@/types/comment';
 import SingleComment from './singleComment/SingleComment';
 import TimeAgo from 'react-timeago';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 const Comment = ({ postId }: { postId: string }) => {
     const [post, setPost] = useState<PostProps>();
@@ -80,10 +81,12 @@ const Comment = ({ postId }: { postId: string }) => {
 
                         {/* Center div */}
                         <div className='p-4 flex justify-between flex-grow h-9/20'>
-                            <div className='flex flex-col w-full mb-2'>
-                                {comments && comments.length
-                                    ? comments.map((comment: CommentResponse) => <SingleComment {...comment} />)
-                                    : 'No comments'}
+                            <div className='flex flex-col w-full mb-2 overflow-y-auto no-scrollbar'>
+                                <ScrollArea className='h-96 w-full'>
+                                    {comments && comments.length
+                                        ? comments.map((comment: CommentResponse) => <SingleComment {...comment} />)
+                                        : 'No comments'}
+                                </ScrollArea>
                             </div>
                         </div>
 
@@ -107,7 +110,7 @@ const Comment = ({ postId }: { postId: string }) => {
                             <span className='text-sm text-muted-foreground mb-3'>{timeAgo}</span>
                             <Separator />
                             <div className='w-full mt-4'>
-                                <AddCommentForm />
+                                <AddCommentForm getComments={getComments} postId={postId} />
                             </div>
                         </div>
                     </div>

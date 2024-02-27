@@ -37,7 +37,7 @@ export const PostProvider: React.FC = ({ children }: any) => {
 
     const getPosts = async () => {
         try {
-            const { data } = await axios.get('/api/posts');
+            const { data } = await axios.get('/api/posts/feed');
             setPosts(data);
         } catch (e) {
             const error = e as AxiosError;
