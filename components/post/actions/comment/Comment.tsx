@@ -1,15 +1,58 @@
+'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { CardDescription, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Bookmark, Heart, MessageCircle, Save, Send } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AddCommentForm from './addCommentForm/AddCommentForm';
+import { PostProps } from '@/types/post';
+import axios, { AxiosError } from 'axios';
+import { CommentResponse } from '@/types/comment';
+import SingleComment from './singleComment/SingleComment';
+import TimeAgo from 'react-timeago';
 
-const Comment = () => {
+const Comment = ({ postId }: { postId: string }) => {
+    const [post, setPost] = useState<PostProps>();
+    const [comments, setComments] = useState<CommentResponse[]>();
+
+    const getPosts = async () => {
+        try {
+            const { data } = await axios.get(`/api/posts/${postId}`);
+            setPost(data);
+        } catch (e) {
+            const error = e as AxiosError;
+        }
+    };
+
+    const getComments = async () => {
+        try {
+            const { data } = await axios.get(`/api/comments/${postId}`);
+            setComments(data);
+        } catch (e) {
+            const error = e as AxiosError;
+        }
+    };
+
+    useEffect(() => {
+        getPosts();
+        getComments();
+    }, []);
+
+    if (!post) {
+        return <div>Loading...</div>;
+    }
+
+    const timeDifference: number = Date.now() - new Date(post.createdAt).getTime();
+
+    let timeAgo: string | React.ReactNode;
+    if (timeDifference < 60000) {
+        timeAgo = 'Just now';
+    } else {
+        timeAgo = <TimeAgo date={post!.createdAt} />;
+    }
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -19,11 +62,7 @@ const Comment = () => {
             </DialogTrigger>
             <DialogContent className='h-[90%] w-full max-w-screen-xl flex'>
                 <div className='w-1/2'>
-                    <img
-                        src='https://res.cloudinary.com/djnljzyhb/image/upload/v1709023291/posts/dnbhsnyv8zympm9lfcnj.jpg'
-                        alt='Post Image'
-                        className='w-full h-full object-cover'
-                    />
+                    <img src={post?.imageUrls[0]} alt='Post Image' className='w-full h-full object-cover' />
                 </div>
 
                 <div className='w-1/2'>
@@ -31,31 +70,21 @@ const Comment = () => {
                         {/* First div */}
                         <div className='flex items-center gap-2 p-4 h-1/20'>
                             <Avatar>
-                                <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
-                                <AvatarFallback>CN</AvatarFallback>
+                                <AvatarImage src={post?.author.imageUrl} alt={post?.author.username} />
+                                <AvatarFallback>{post?.author.username.split('')[0]}</AvatarFallback>
                             </Avatar>
-                            <p className='text-lg font-bold'>Username</p>
+                            <p className='text-lg font-bold'>{post?.author.username}</p>
                         </div>
 
                         <Separator />
 
                         {/* Center div */}
                         <div className='p-4 flex justify-between flex-grow h-9/20'>
-                            <div className='flex  mb-2'>
-                                <div className='flex gap-4'>
-                                    <Avatar>
-                                        <AvatarImage src='https://github.com/shadcn.png' alt='shadcn' />
-                                        <AvatarFallback>CN</AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <Label className='flex items-baseline gap-1'>
-                                            <p className='font-bold text-base'>Sharath</p> This is a test comment
-                                        </Label>
-                                        <CardDescription>{`1d   1 like`}</CardDescription>
-                                    </div>
-                                </div>
+                            <div className='flex flex-col w-full mb-2'>
+                                {comments && comments.length
+                                    ? comments.map((comment: CommentResponse) => <SingleComment {...comment} />)
+                                    : 'No comments'}
                             </div>
-                            <Heart className='w-4 h-14' />
                         </div>
 
                         <Separator />
@@ -74,8 +103,8 @@ const Comment = () => {
                                     </div>
                                 </div>
                             </div>
-                            <span className='text-lg font-semibold mt-3'>544 Likes</span>
-                            <span className='text-sm text-muted-foreground mb-3'>3 days ago</span>
+                            <span className='text-lg font-semibold mt-3'>{post?.likes.length} Likes</span>
+                            <span className='text-sm text-muted-foreground mb-3'>{timeAgo}</span>
                             <Separator />
                             <div className='w-full mt-4'>
                                 <AddCommentForm />

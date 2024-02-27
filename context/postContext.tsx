@@ -15,7 +15,7 @@ interface Post {
     imageUrls: string[];
     likes: string[];
     comments: string[];
-    createdAt: string;
+    createdAt: Date;
 }
 
 interface PostContextType {

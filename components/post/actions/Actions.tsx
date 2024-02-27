@@ -18,7 +18,7 @@ const Actions = ({
         <div className='flex justify-between w-full'>
             <div>
                 <Like setLikeCount={setLikeCount} id={id} likes={likes} />
-                <Comment />
+                <Comment postId={id} />
                 <Share />
             </div>
             <div>
