@@ -11,7 +11,7 @@ const Like = ({
     likes,
     setLikeCount,
 }: {
-    id: number;
+    id: string;
     likes: string[];
     setLikeCount: Dispatch<SetStateAction<number>>;
 }) => {

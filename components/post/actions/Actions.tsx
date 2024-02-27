@@ -3,13 +3,14 @@ import Like from './like/Like';
 import Comment from './comment/Comment';
 import Share from './share/Share';
 import Save from './save/Save';
+import { MessageCircle } from 'lucide-react';
 
 const Actions = ({
     id,
     likes,
     setLikeCount,
 }: {
-    id: number;
+    id: string;
     likes: string[];
     setLikeCount: Dispatch<SetStateAction<number>>;
 }) => {
