@@ -35,11 +35,10 @@ const EditPostForm = () => {
             }
         };
 
-        // Fetch data only on the client side
         if (postId) {
             getPosts();
         }
-    }, [postId]); // Trigger the API call when postId changes
+    }, [postId]);
 
     // 1. Define your form with initial values.
     const form = useForm<z.infer<typeof PostValidation>>({
