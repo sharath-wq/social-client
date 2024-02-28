@@ -9,12 +9,15 @@ import { useUser } from '@/context/userContext';
 import ProfileHeaderSkelton from '@/components/Skeltons/profile/ProfileHeaderSkelton';
 import PostsGridSkeleton from '@/components/Skeltons/profile/PostsGridSkelton';
 import { UserData } from '@/types/user';
-import { UserPostData } from '@/types/post';
+import { PostData, UserPostData } from '@/types/post';
 import { useRouter } from 'next/navigation';
+import { Tabs } from '@/components/ui/tabs';
+import ProfileTabs from '@/components/profile/tabs/ProfileTabs';
 
 const ProfilePage = () => {
     const [userData, setUserData] = useState<UserData>();
     const [userPostsData, setuserPostsData] = useState<UserPostData[] | null>(null);
+    const [savedPosts, setSavedPosts] = useState<PostData[]>();
 
     const router = useRouter();
     const { currentUser } = useUser();
@@ -23,6 +26,15 @@ const ProfilePage = () => {
         try {
             const { data } = await axios.get(`/api/posts/user/${currentUser!.userId}/`);
             setuserPostsData(data);
+        } catch (e) {
+            const error = e as AxiosError;
+        }
+    };
+
+    const fetchUserSavedPosts = async () => {
+        try {
+            const { data } = await axios.get(`/api/users/saved`);
+            setSavedPosts(data);
         } catch (e) {
             const error = e as AxiosError;
         }
@@ -47,15 +59,21 @@ const ProfilePage = () => {
         })();
 
         fetchUserPosts();
+        fetchUserSavedPosts();
     }, [currentUser]);
 
     return (
         <div className='flex justify-center mt-20 h-screen '>
             <div className='w-3/4 flex flex-col gap-10'>
                 {userData ? <ProfileHeader {...userData} /> : <ProfileHeaderSkelton />}
-                <Separator className='my-4' />
+                <Separator className='mt-4 mb-2' />
                 {userPostsData ? (
-                    <UserPosts fetchUserPosts={fetchUserPosts} posts={userPostsData} />
+                    <ProfileTabs
+                        fetchSavedPosts={fetchUserPosts}
+                        savedPosts={savedPosts || []}
+                        fetchUserPosts={fetchUserPosts}
+                        userPostsData={userPostsData}
+                    />
                 ) : (
                     <PostsGridSkeleton />
                 )}

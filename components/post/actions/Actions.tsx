@@ -22,7 +22,7 @@ const Actions = ({
                 <Share />
             </div>
             <div>
-                <Save />
+                <Save postId={id} />
             </div>
         </div>
     );
