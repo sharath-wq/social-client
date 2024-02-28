@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Bookmark, Heart, MessageCircle, Save, Send } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import AddCommentForm from './addCommentForm/AddCommentForm';
 import { PostProps } from '@/types/post';
 import axios, { AxiosError } from 'axios';
@@ -14,7 +14,7 @@ import SingleComment from './singleComment/SingleComment';
 import TimeAgo from 'react-timeago';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 
-const Comment = ({ postId }: { postId: string }) => {
+const Comment = ({ postId, setCommentCount }: { postId: string; setCommentCount: Dispatch<SetStateAction<number>> }) => {
     const [post, setPost] = useState<PostProps>();
     const [comments, setComments] = useState<CommentResponse[]>();
 
@@ -31,6 +31,7 @@ const Comment = ({ postId }: { postId: string }) => {
         try {
             const { data } = await axios.get(`/api/comments/${postId}`);
             setComments(data);
+            setCommentCount(data.length);
         } catch (e) {
             const error = e as AxiosError;
         }

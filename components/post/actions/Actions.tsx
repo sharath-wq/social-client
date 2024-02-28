@@ -9,16 +9,18 @@ const Actions = ({
     id,
     likes,
     setLikeCount,
+    setCommentCount,
 }: {
     id: string;
     likes: string[];
     setLikeCount: Dispatch<SetStateAction<number>>;
+    setCommentCount: Dispatch<SetStateAction<number>>;
 }) => {
     return (
         <div className='flex justify-between w-full'>
             <div>
                 <Like setLikeCount={setLikeCount} id={id} likes={likes} />
-                <Comment postId={id} />
+                <Comment setCommentCount={setCommentCount} postId={id} />
                 <Share />
             </div>
             <div>
