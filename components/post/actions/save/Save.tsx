@@ -10,7 +10,7 @@ const Save = ({ postId }: { postId: string }) => {
     const [isSaved, setIsSaved] = useState<boolean>(false);
 
     useEffect(() => {
-        setIsSaved(currentUser?.savedPosts.includes(postId) || false);
+        setIsSaved((currentUser && currentUser.savedPosts?.includes(postId)) || false);
     }, [currentUser, postId]);
 
     const handleLikeButtonClick = async () => {

@@ -85,7 +85,9 @@ const Comment = ({ postId, setCommentCount }: { postId: string; setCommentCount:
                             <div className='flex flex-col w-full mb-2 overflow-y-auto no-scrollbar'>
                                 <ScrollArea className='h-96 w-full'>
                                     {comments && comments.length
-                                        ? comments.map((comment: CommentResponse) => <SingleComment {...comment} />)
+                                        ? comments.map((comment: CommentResponse) => (
+                                              <SingleComment key={comment.id} {...comment} />
+                                          ))
                                         : 'No comments'}
                                 </ScrollArea>
                             </div>

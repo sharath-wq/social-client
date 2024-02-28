@@ -20,7 +20,7 @@ const SingleSuggesteduser = ({
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
     useEffect(() => {
-        setIsFollowing(currentUser?.following.includes(id) || false);
+        setIsFollowing((currentUser && currentUser.following?.includes(id)) || false);
     }, [currentUser, id]);
 
     const handleClick = async () => {
