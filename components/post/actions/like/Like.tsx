@@ -16,7 +16,7 @@ const Like = ({
     setLikeCount: Dispatch<SetStateAction<number>>;
 }) => {
     const { currentUser } = useUser();
-    const [isLiked, setIsLiked] = useState<Boolean>(likes.includes(currentUser!.userId));
+    const [isLiked, setIsLiked] = useState<Boolean>(currentUser ? likes.includes(currentUser?.userId) : false);
 
     const handleLikeButtonClick = async () => {
         try {
