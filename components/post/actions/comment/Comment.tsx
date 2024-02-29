@@ -14,7 +14,19 @@ import SingleComment from './singleComment/SingleComment';
 import TimeAgo from 'react-timeago';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 
-const Comment = ({ postId, setCommentCount }: { postId: string; setCommentCount: Dispatch<SetStateAction<number>> }) => {
+const Comment = ({
+    postId,
+    setCommentCount,
+    isLiked,
+    handleLikeButtonClick,
+    likeCount,
+}: {
+    postId: string;
+    setCommentCount: Dispatch<SetStateAction<number>>;
+    isLiked: boolean;
+    handleLikeButtonClick: () => void;
+    likeCount: number;
+}) => {
     const [post, setPost] = useState<PostProps>();
     const [comments, setComments] = useState<CommentResponse[]>();
 
@@ -39,24 +51,25 @@ const Comment = ({ postId, setCommentCount }: { postId: string; setCommentCount:
 
     useEffect(() => {
         getPosts();
-        getComments();
     }, []);
 
-    if (!post) {
-        return <div>Loading...</div>;
-    }
+    const handleModelOpen = async (open: boolean) => {
+        if (open) {
+            await getComments();
+        }
+    };
 
-    const timeDifference: number = Date.now() - new Date(post.createdAt).getTime();
+    const timeDifference: number = Date.now() - new Date(post?.createdAt || '').getTime();
 
     let timeAgo: string | React.ReactNode;
     if (timeDifference < 60000) {
         timeAgo = 'Just now';
     } else {
-        timeAgo = <TimeAgo date={post!.createdAt} />;
+        timeAgo = <TimeAgo date={post?.createdAt || new Date()} />;
     }
 
     return (
-        <Dialog>
+        <Dialog onOpenChange={handleModelOpen}>
             <DialogTrigger asChild>
                 <Button variant={'ghost'}>
                     <MessageCircle />
@@ -86,7 +99,7 @@ const Comment = ({ postId, setCommentCount }: { postId: string; setCommentCount:
                                 <ScrollArea className='h-96 w-full'>
                                     {comments && comments.length
                                         ? comments.map((comment: CommentResponse) => (
-                                              <SingleComment key={comment.id} {...comment} />
+                                              <SingleComment getComments={getComments} key={comment.id} {...comment} />
                                           ))
                                         : 'No comments'}
                                 </ScrollArea>
@@ -100,7 +113,13 @@ const Comment = ({ postId, setCommentCount }: { postId: string; setCommentCount:
                             <div className='flex space-x-4 w-full'>
                                 <div className='flex justify-between w-full'>
                                     <div className='flex gap-5'>
-                                        <Heart />
+                                        <Button
+                                            className='transition-colors duration-300 ease-in-out'
+                                            onClick={handleLikeButtonClick}
+                                            variant={'ghost'}
+                                        >
+                                            {isLiked ? <Heart fill='#dc2626' color='#dc2626' /> : <Heart />}
+                                        </Button>
                                         <MessageCircle />
                                         <Send />
                                     </div>
@@ -109,7 +128,7 @@ const Comment = ({ postId, setCommentCount }: { postId: string; setCommentCount:
                                     </div>
                                 </div>
                             </div>
-                            <span className='text-lg font-semibold mt-3'>{post?.likes.length} Likes</span>
+                            <span className='text-lg font-semibold mt-3'>{likeCount} Likes</span>
                             <span className='text-sm text-muted-foreground mb-3'>{timeAgo}</span>
                             <Separator />
                             <div className='w-full mt-4'>

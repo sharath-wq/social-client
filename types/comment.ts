@@ -12,3 +12,13 @@ export type CommentResponse = {
     likes: string[];
     createdAt: Date;
 };
+
+export type SingleCommentProps = {
+    id: string;
+    postId: string;
+    author: Author;
+    content: string;
+    likes: string[];
+    createdAt: Date;
+    getComments: () => void;
+};
