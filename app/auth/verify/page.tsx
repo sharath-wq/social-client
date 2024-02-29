@@ -22,10 +22,6 @@ const VerifyOtpPage: React.FC = () => {
         const storedOtpDetails = typeof window !== 'undefined' ? localStorage?.getItem('otpDetails') : null;
         const otpDetails = storedOtpDetails ? JSON.parse(storedOtpDetails) : null;
 
-        if (!otpDetails) {
-            router.replace('/');
-        }
-
         if (otpDetails) {
             setOtpData(otpDetails);
 

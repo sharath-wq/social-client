@@ -199,7 +199,7 @@ const Post = ({ author, caption, comments, createdAt, id, imageUrls, likes, tags
                                             <img
                                                 src={imageUrls[index]}
                                                 alt={`image-${index}`}
-                                                style={{ objectFit: 'fill', height: '100%' }}
+                                                style={{ objectFit: 'contain', width: '100%', height: '100%' }}
                                             />
                                         </CardContent>
                                     </Card>
