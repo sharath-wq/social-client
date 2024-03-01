@@ -3,11 +3,18 @@ import { toast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/userContext';
 import axios from 'axios';
 import { Bookmark } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, SetStateAction, Dispatch } from 'react';
 
-const Save = ({ postId }: { postId: string }) => {
+const Save = ({
+    postId,
+    isSaved,
+    setIsSaved,
+}: {
+    postId: string;
+    isSaved: boolean;
+    setIsSaved: Dispatch<SetStateAction<boolean>>;
+}) => {
     const { currentUser } = useUser();
-    const [isSaved, setIsSaved] = useState<boolean>(false);
 
     useEffect(() => {
         setIsSaved((currentUser && currentUser.savedPosts?.includes(postId)) || false);
