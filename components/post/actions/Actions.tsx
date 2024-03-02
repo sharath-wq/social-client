@@ -3,9 +3,9 @@ import Like from './like/Like';
 import Comment from './comment/Comment';
 import Share from './share/Share';
 import Save from './save/Save';
-import { MessageCircle } from 'lucide-react';
 import { useUser } from '@/context/userContext';
 import axios from 'axios';
+import { Author } from '@/types/comment';
 
 const Actions = ({
     id,
@@ -13,14 +13,17 @@ const Actions = ({
     setLikeCount,
     setCommentCount,
     likeCount,
+    author,
 }: {
     id: string;
     likes: string[];
     setLikeCount: Dispatch<SetStateAction<number>>;
     setCommentCount: Dispatch<SetStateAction<number>>;
     likeCount: number;
+    author: Author;
 }) => {
     const { currentUser } = useUser();
+    const [isSaved, setIsSaved] = useState<boolean>(false);
 
     const [isLiked, setIsLiked] = useState<boolean>(currentUser ? likes.includes(currentUser?.userId) : false);
 
@@ -51,12 +54,17 @@ const Actions = ({
                     setCommentCount={setCommentCount}
                     postId={id}
                     likeCount={likeCount}
+                    author={author}
+                    isSaved={isSaved}
+                    setIsSaved={setIsSaved}
                 />
                 <Share />
             </div>
-            <div>
-                <Save postId={id} />
-            </div>
+            {author.userId !== currentUser?.userId && (
+                <div>
+                    <Save isSaved={isSaved} setIsSaved={setIsSaved} postId={id} />
+                </div>
+            )}
         </div>
     );
 };

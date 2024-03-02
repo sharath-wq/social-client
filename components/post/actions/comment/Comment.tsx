@@ -4,15 +4,17 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { Bookmark, Heart, MessageCircle, Save, Send } from 'lucide-react';
+import { Bookmark, Heart, MessageCircle, Send } from 'lucide-react';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import AddCommentForm from './addCommentForm/AddCommentForm';
 import { PostProps } from '@/types/post';
 import axios, { AxiosError } from 'axios';
-import { CommentResponse } from '@/types/comment';
+import { Author, CommentResponse } from '@/types/comment';
 import SingleComment from './singleComment/SingleComment';
 import TimeAgo from 'react-timeago';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { useUser } from '@/context/userContext';
+import Save from '../save/Save';
 
 const Comment = ({
     postId,
@@ -20,15 +22,23 @@ const Comment = ({
     isLiked,
     handleLikeButtonClick,
     likeCount,
+    author,
+    isSaved,
+    setIsSaved,
 }: {
     postId: string;
     setCommentCount: Dispatch<SetStateAction<number>>;
     isLiked: boolean;
     handleLikeButtonClick: () => void;
     likeCount: number;
+    author: Author;
+    isSaved: boolean;
+    setIsSaved: Dispatch<SetStateAction<boolean>>;
 }) => {
     const [post, setPost] = useState<PostProps>();
     const [comments, setComments] = useState<CommentResponse[]>();
+
+    const { currentUser } = useUser();
 
     const getPosts = async () => {
         try {
@@ -112,7 +122,7 @@ const Comment = ({
                         <div className='p-4 flex flex-col items-start justify-between h-1/20'>
                             <div className='flex space-x-4 w-full'>
                                 <div className='flex justify-between w-full'>
-                                    <div className='flex gap-5'>
+                                    <div className='flex'>
                                         <Button
                                             className='transition-colors duration-300 ease-in-out'
                                             onClick={handleLikeButtonClick}
@@ -120,12 +130,18 @@ const Comment = ({
                                         >
                                             {isLiked ? <Heart fill='#dc2626' color='#dc2626' /> : <Heart />}
                                         </Button>
-                                        <MessageCircle />
-                                        <Send />
+                                        <Button variant={'ghost'}>
+                                            <MessageCircle />
+                                        </Button>
+                                        <Button variant={'ghost'}>
+                                            <Send />
+                                        </Button>
                                     </div>
-                                    <div>
-                                        <Bookmark />
-                                    </div>
+                                    {author.userId !== currentUser?.userId && (
+                                        <div>
+                                            <Save setIsSaved={setIsSaved} isSaved={isSaved} postId={postId} />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <span className='text-lg font-semibold mt-3'>{likeCount} Likes</span>

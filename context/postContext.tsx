@@ -16,6 +16,7 @@ interface Post {
     likes: string[];
     comments: string[];
     createdAt: Date;
+    isEdited: boolean;
 }
 
 interface PostContextType {
