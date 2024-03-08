@@ -1,16 +1,48 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import React from 'react';
+import { User, UserData } from '@/types/user';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
-const Conversation = () => {
+const Conversation = ({
+    conversation,
+    currentUser,
+    setOtherUser,
+    otherUser,
+}: {
+    conversation: any;
+    currentUser: User | null;
+    setOtherUser: any;
+    otherUser: any;
+}) => {
+    const [user, setUser] = useState<UserData | null>(null);
+
+    useEffect(() => {
+        const friendId = conversation.members.find((m: string) => m !== currentUser?.userId);
+
+        const getUser = async () => {
+            try {
+                const { data } = await axios.get(`/api/users/${friendId}`);
+                setUser(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getUser();
+    }, [currentUser, conversation]);
+
+    useEffect(() => {
+        setOtherUser(user);
+    }, [user]);
+
     return (
-        <div className='flex items-center p-3 cursor-pointer mt-5 hover:bg-secondary rounded-full'>
+        <div className='flex items-center p-2 cursor-pointer mt-5 hover:bg-secondary rounded-full'>
             <Avatar>
-                <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={user?.imageUrl} alt='@shadcn' />
+                <AvatarFallback>{user?.username.split('')[0]}</AvatarFallback>
             </Avatar>
             <div className='flex flex-col'>
-                <span className='font-bold ml-5'>username</span>
-                <span className='font-light ml-5'>full name</span>
+                <span className='font-bold ml-5'>{user?.username}</span>
+                <span className='font-light ml-5'>{user?.fullName}</span>
             </div>
         </div>
     );

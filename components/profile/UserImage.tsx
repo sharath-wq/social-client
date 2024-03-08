@@ -1,11 +1,3 @@
-import { z } from 'zod';
-
-import { zodResolver } from '@hookform/resolvers/zod';
-
-import { ProfileImageValidation } from '@/lib/validation';
-
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-
 import React, { useState, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -13,7 +5,6 @@ import useRequest from '@/hooks/useRequest';
 import { toast } from '../ui/use-toast';
 import { useUser } from '@/context/userContext';
 import { ButtonLoading } from '../button/LoadingButton';
-import { useForm } from 'react-hook-form';
 
 type UserImageProps = {
     username: string;
