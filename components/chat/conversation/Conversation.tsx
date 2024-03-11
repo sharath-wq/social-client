@@ -6,13 +6,11 @@ import React, { useEffect, useState } from 'react';
 const Conversation = ({
     conversation,
     currentUser,
-    setOtherUser,
-    otherUser,
+    currentChat,
 }: {
     conversation: any;
     currentUser: User | null;
-    setOtherUser: any;
-    otherUser: any;
+    currentChat: any;
 }) => {
     const [user, setUser] = useState<UserData | null>(null);
 
@@ -30,12 +28,12 @@ const Conversation = ({
         getUser();
     }, [currentUser, conversation]);
 
-    useEffect(() => {
-        setOtherUser(user);
-    }, [user]);
-
     return (
-        <div className='flex items-center p-2 cursor-pointer mt-5 hover:bg-secondary rounded-full'>
+        <div
+            className={`flex items-center p-2 cursor-pointer mt-5 rounded-2xl hover:bg-secondary ${
+                currentChat?.id === conversation.id ? 'bg-secondary' : ''
+            }`}
+        >
             <Avatar>
                 <AvatarImage src={user?.imageUrl} alt='@shadcn' />
                 <AvatarFallback>{user?.username.split('')[0]}</AvatarFallback>

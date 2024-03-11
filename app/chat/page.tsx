@@ -33,7 +33,6 @@ const ChatPage = () => {
     const { currentUser } = useUser();
     const scrollRef: any = useRef();
     const router = useRouter();
-    const [otherUser, setOtherUser] = useState<UserData | null>(null);
 
     useEffect(() => {
         if (!currentUser) {
@@ -141,12 +140,7 @@ const ChatPage = () => {
                         <div className='h-full overflow-y-scroll no-scrollbar'>
                             {conversations.map((c: any) => (
                                 <div key={c.id} onClick={() => setCurrentChat(c)}>
-                                    <Conversation
-                                        otherUser={otherUser}
-                                        setOtherUser={setOtherUser}
-                                        conversation={c}
-                                        currentUser={currentUser}
-                                    />
+                                    <Conversation currentChat={currentChat} conversation={c} currentUser={currentUser} />
                                 </div>
                             ))}
                         </div>
@@ -158,13 +152,7 @@ const ChatPage = () => {
                             <div className='h-screen overflow-y-scroll no-scrollbar pr-3'>
                                 {messages.map((m: any) => (
                                     <div key={m.id} ref={scrollRef}>
-                                        <Message
-                                            imageUrl={
-                                                m.sender === currentUser.userId ? currentUser.imageUrl : otherUser!.imageUrl
-                                            }
-                                            message={m}
-                                            own={m.sender !== currentUser?.userId}
-                                        />
+                                        <Message message={m} own={m.sender !== currentUser?.userId} />
                                     </div>
                                 ))}
                             </div>
