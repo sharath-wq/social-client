@@ -5,7 +5,7 @@ import { useNotifications } from '@/context/notificationContext';
 import { useUser } from '@/context/userContext';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 const Notifications = () => {
     const router = useRouter();
@@ -20,6 +20,18 @@ const Notifications = () => {
     }, [currentUser, router]);
 
     const { newNotifications, oldNotifications, markNotificationsAsRead, getNotifications } = useNotifications();
+
+    useEffect(() => {
+        (async () => {
+            try {
+                if (currentUser?.userId) {
+                    await getNotifications();
+                }
+            } catch (e) {
+                const error = e as AxiosError;
+            }
+        })();
+    }, [currentUser]);
 
     useEffect(() => {
         return () => {
