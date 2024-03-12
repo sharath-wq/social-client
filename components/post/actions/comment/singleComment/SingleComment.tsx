@@ -42,7 +42,7 @@ const SingleComment = ({ author, content, createdAt, id, likes, postId, getComme
     };
 
     return (
-        <div className='flex justify-between w-full'>
+        <div className='flex justify-between w-full mt-2'>
             <div className='flex gap-5'>
                 <Avatar>
                     <AvatarImage src={author.imageUrl} alt='shadcn' />
@@ -50,7 +50,9 @@ const SingleComment = ({ author, content, createdAt, id, likes, postId, getComme
                 </Avatar>
                 <div>
                     <Label className='flex items-baseline gap-1'>
-                        <p className='font-bold text-base'>{author.username}</p> {content}
+                        <p>
+                            <span className='font-bold text-base'>{author.username}</span> {content}
+                        </p>
                     </Label>
                     <CardDescription>
                         {timeAgo} {`${likeCount} likes`}
