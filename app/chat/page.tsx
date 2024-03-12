@@ -21,7 +21,6 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { useForm } from 'react-hook-form';
 import { MessageValidation } from '@/lib/validation';
 import { Socket, io } from 'socket.io-client';
-import { UserData } from '@/types/user';
 
 const ChatPage = () => {
     const [conversations, setConversations] = useState([]);
@@ -37,7 +36,8 @@ const ChatPage = () => {
     useEffect(() => {
         if (!currentUser) {
             router.replace('/auth/login');
-            return;
+        } else {
+            router.replace('/chat');
         }
     }, [currentUser, router]);
 

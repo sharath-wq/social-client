@@ -1,27 +1,35 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CardDescription, CardTitle } from '@/components/ui/card';
+import { INotification } from '@/types/notifications';
+import TimeAgo from 'react-timeago';
 
-const Notification = () => {
+const Notification = ({ notification }: { notification: INotification }) => {
+    const timeDifference: number = Date.now() - new Date(notification.createdAt).getTime();
+
+    let timeAgo: string | React.ReactNode;
+    if (timeDifference < 60000) {
+        timeAgo = 'Just now';
+    } else {
+        timeAgo = <TimeAgo date={notification.createdAt} />;
+    }
+
     return (
         <div className='flex gap-2 justify-between'>
             <div className='flex gap-5'>
                 <Avatar className='w-12 h-12'>
-                    <AvatarImage src='https://github.com/shadcn.png' alt='@shadcn' />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarImage src={notification.sender.imageUrl} alt='@shadcn' />
+                    <AvatarFallback>{notification.sender.username.split('')[0]}</AvatarFallback>
                 </Avatar>
                 <div className='flex flex-col justify-center'>
                     <CardTitle className='text-base font-medium '>
-                        <span className='text-lg font-semibold'>sharth-wq</span> commented on you post
+                        <span className='text-lg font-semibold'>{notification.sender.username} </span>
+                        {notification.content}
                     </CardTitle>
-                    <CardDescription>1 hour ago</CardDescription>
+                    <CardDescription>{timeAgo}</CardDescription>
                 </div>
             </div>
             <div>
-                <img
-                    className='w-12 h-12 object-contain'
-                    src='https://res.cloudinary.com/djnljzyhb/image/upload/v1709271135/posts/jhmqpdxm2slv3brevptg.jpg'
-                    alt=''
-                />
+                <img className='w-12 h-12 object-contain' src={notification.post.imageUrls[0]} alt='' />
             </div>
         </div>
     );

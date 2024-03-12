@@ -148,7 +148,11 @@ const Comment = ({
                             <span className='text-sm text-muted-foreground mb-3'>{timeAgo}</span>
                             <Separator />
                             <div className='w-full mt-4'>
-                                <AddCommentForm getComments={getComments} postId={postId} />
+                                <AddCommentForm
+                                    getComments={getComments}
+                                    postId={postId}
+                                    postAuthorId={post && post.author.userId ? post.author.userId : ''}
+                                />
                             </div>
                         </div>
                     </div>
