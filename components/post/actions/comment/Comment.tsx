@@ -25,6 +25,7 @@ const Comment = ({
     author,
     isSaved,
     setIsSaved,
+    handleNotification,
 }: {
     postId: string;
     setCommentCount: Dispatch<SetStateAction<number>>;
@@ -34,6 +35,7 @@ const Comment = ({
     author: Author;
     isSaved: boolean;
     setIsSaved: Dispatch<SetStateAction<boolean>>;
+    handleNotification: (senderId: string, receiverId: string) => void;
 }) => {
     const [post, setPost] = useState<PostProps>();
     const [comments, setComments] = useState<CommentResponse[]>();
@@ -152,6 +154,7 @@ const Comment = ({
                                     getComments={getComments}
                                     postId={postId}
                                     postAuthorId={post && post.author.userId ? post.author.userId : ''}
+                                    handleNotification={handleNotification}
                                 />
                             </div>
                         </div>

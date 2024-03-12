@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
 import useRequest from '@/hooks/useRequest';
 import { toast } from '@/components/ui/use-toast';
+import { useUser } from '@/context/userContext';
 
 const commentSchema = z.object({
     content: z.string().min(2),
@@ -19,10 +20,12 @@ const AddCommentForm = ({
     postId,
     getComments,
     postAuthorId,
+    handleNotification,
 }: {
     postId: string;
     getComments: () => void;
     postAuthorId: string;
+    handleNotification: (senderId: string, receiverId: string) => void;
 }) => {
     const form = useForm<z.infer<typeof commentSchema>>({
         resolver: zodResolver(commentSchema),
@@ -36,6 +39,8 @@ const AddCommentForm = ({
         doRequest(values);
     }
 
+    const { currentUser } = useUser();
+
     const { doRequest, errors } = useRequest({
         url: `/api/comments/${postId}`,
         method: 'post',
@@ -46,6 +51,7 @@ const AddCommentForm = ({
             toast({
                 description: 'Comment Added',
             });
+            handleNotification(currentUser!.userId, postAuthorId);
             form.setValue('content', '');
             getComments();
         },

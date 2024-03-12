@@ -3,6 +3,7 @@
 import Notification from '@/components/notifications/notification/Notification';
 import { useNotifications } from '@/context/notificationContext';
 import { useUser } from '@/context/userContext';
+import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -18,7 +19,7 @@ const Notifications = () => {
         }
     }, [currentUser, router]);
 
-    const { newNotifications, oldNotifications, markNotificationsAsRead } = useNotifications();
+    const { newNotifications, oldNotifications, markNotificationsAsRead, getNotifications } = useNotifications();
 
     useEffect(() => {
         return () => {
