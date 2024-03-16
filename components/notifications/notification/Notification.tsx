@@ -1,6 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import { INotification } from '@/types/notifications';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import TimeAgo from 'react-timeago';
 
 const Notification = ({ notification }: { notification: INotification }) => {
@@ -30,7 +32,9 @@ const Notification = ({ notification }: { notification: INotification }) => {
             </div>
             <div>
                 {notification.type !== 'Follow' && (
-                    <img className='w-12 h-12 object-contain' src={notification.post.imageUrls[0]} alt='' />
+                    <Link href={`/post/view/${notification.postId}`}>
+                        <img className='w-12 h-12 object-contain' src={notification.post.imageUrls[0]} alt='' />
+                    </Link>
                 )}
             </div>
         </div>

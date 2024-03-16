@@ -1,35 +1,52 @@
 'use client';
 
-import { Suggetions } from '@/components/user-suggetions/Suggetions';
-import React, { useRef } from 'react';
+import Post from '@/components/post/Post';
+import { useNotifications } from '@/context/notificationContext';
+import { useUser } from '@/context/userContext';
+import { Author } from '@/types/comment';
+import axios, { AxiosError } from 'axios';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 
-import { useEffect } from 'react';
-import { IPost } from '@/types/post';
-import { useUser } from '@/context/userContext';
-import { useRouter } from 'next/navigation';
-import { usePost } from '@/context/postContext';
-import { useNotifications } from '@/context/notificationContext';
-import Post from '@/components/post/Post';
-import { AxiosError } from 'axios';
+interface Post {
+    id: string;
+    author: Author;
+    caption: string;
+    tags: string[];
+    imageUrls: string[];
+    likes: string[];
+    comments: string[];
+    createdAt: Date;
+    isEdited: boolean;
+}
 
-const Home = () => {
+const SinglePost = () => {
     const { currentUser } = useUser();
     const router = useRouter();
     const socket = useRef<Socket>();
     const { getNotifications } = useNotifications();
+    const { postId }: { postId: string } = useParams();
+    const [post, setPost] = useState<Post>();
 
     const { count, setCount } = useNotifications();
 
-    useEffect(() => {
-        const sessionCookie = document.cookie.split(';').find((cookie) => cookie.trim().startsWith('session='));
+    console.log(post);
 
-        if (!currentUser && !sessionCookie) {
-            router.push('/auth/login');
-        } else if (currentUser && currentUser.isBlocked) {
-            router.replace('/auth/blocked');
+    const getPostById = async (id: string) => {
+        try {
+            const { data } = await axios.get(`/api/posts/${id}`);
+            setPost(data);
+        } catch (e) {
+            const error = e as AxiosError;
+            console.error('Error fetching posts:', error.message);
+            setPost(undefined);
         }
-    }, [currentUser, router]);
+    };
+
+    useEffect(() => {
+        getPostById(postId);
+    }, []);
 
     useEffect(() => {
         socket.current = io('wss://xsocial.dev/notification');
@@ -61,6 +78,7 @@ const Home = () => {
             try {
                 if (currentUser?.userId) {
                     await getNotifications();
+                    await getPostById(postId);
                 }
             } catch (e) {
                 const error = e as AxiosError;
@@ -68,20 +86,13 @@ const Home = () => {
         })();
     }, [currentUser]);
 
-    const { posts } = usePost();
-
     return (
         <div className='w-full flex flex-col gap-10 sm:flex-row'>
             <div className='w-full sm:w-1/2 flex flex-col gap-10'>
-                {posts &&
-                    posts.map((post: IPost) => <Post key={post.id} {...post} handleNotification={handleNotification} />)}
-            </div>
-
-            <div className='hidden sm:block p-4'>
-                <Suggetions handleNotification={handleNotification} />
+                {post && <Post key={postId} {...post} handleNotification={handleNotification} />}
             </div>
         </div>
     );
 };
 
-export default Home;
+export default SinglePost;
