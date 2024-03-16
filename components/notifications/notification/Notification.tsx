@@ -29,7 +29,9 @@ const Notification = ({ notification }: { notification: INotification }) => {
                 </div>
             </div>
             <div>
-                <img className='w-12 h-12 object-contain' src={notification.post.imageUrls[0]} alt='' />
+                {notification.type !== 'Follow' && (
+                    <img className='w-12 h-12 object-contain' src={notification.post.imageUrls[0]} alt='' />
+                )}
             </div>
         </div>
     );

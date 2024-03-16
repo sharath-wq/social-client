@@ -10,11 +10,13 @@ const SingleSuggesteduser = ({
     imageUrl,
     username,
     fullName,
+    handleNotification,
 }: {
     id: string;
     imageUrl: string;
     username: string;
     fullName: string;
+    handleNotification: (senderId: string, receiverId: string) => void;
 }) => {
     const { currentUser } = useUser();
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
@@ -29,6 +31,10 @@ const SingleSuggesteduser = ({
             toast({
                 description: `${isFollowing ? 'unfollowed' : 'followed'}`,
             });
+
+            if (!isFollowing) {
+                handleNotification(currentUser!.userId, id);
+            }
             setIsFollowing((prev) => !prev);
         } catch (error) {
             console.log(error);
