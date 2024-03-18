@@ -23,7 +23,7 @@ import { MessageValidation } from '@/lib/validation';
 import { Socket, io } from 'socket.io-client';
 
 const ChatPage = () => {
-    const [conversations, setConversations] = useState([]);
+    const [conversations, setConversations] = useState<any>([]);
     const [currentChat, setCurrentChat] = useState<CurrentChat | null>(null);
     const [messages, setMessages] = useState<IMessage[] | []>([]);
     const [arrivalMessage, setArrivalMessage] = useState<any>(null);
@@ -44,10 +44,26 @@ const ChatPage = () => {
     useEffect(() => {
         socket.current = io('wss://xsocial.dev/chat');
         socket.current.on('getMessage', (data) => {
-            setArrivalMessage({
+            const arrivalMessage = {
                 sender: data.senderId,
                 text: data.text,
+                conversationId: data.conversationId,
                 createdAt: Date.now(),
+            };
+
+            setArrivalMessage(arrivalMessage);
+
+            setConversations((prevConversations: any) => {
+                return prevConversations.map((conversation: any) => {
+                    if (conversation.id === arrivalMessage.conversationId) {
+                        return {
+                            ...conversation,
+                            recentMessage: arrivalMessage.text,
+                            updatedAt: new Date(),
+                        };
+                    }
+                    return conversation;
+                });
             });
         });
     }, []);
@@ -100,7 +116,7 @@ const ChatPage = () => {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof MessageValidation>) {
-        const sendMessge = async () => {
+        const sendMessage = async () => {
             const message = {
                 sender: currentUser?.userId,
                 text: values.text,
@@ -113,6 +129,21 @@ const ChatPage = () => {
                 senderId: currentUser?.userId,
                 receiverId,
                 text: values.text,
+                conversationId: currentChat?.id,
+            });
+
+            // Update existing conversation with new message details
+            setConversations((prevConversations: any) => {
+                return prevConversations.map((conversation: any) => {
+                    if (conversation.id === message.conversationId) {
+                        return {
+                            ...conversation,
+                            recentMessage: message.text,
+                            updatedAt: new Date(),
+                        };
+                    }
+                    return conversation;
+                });
             });
 
             try {
@@ -124,12 +155,16 @@ const ChatPage = () => {
             }
         };
 
-        sendMessge();
+        sendMessage();
     }
 
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    const sortedConversations = conversations.slice().sort((a: any, b: any) => {
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
 
     return (
         currentUser && (
@@ -138,7 +173,7 @@ const ChatPage = () => {
                     <div className='p-3 h-[80vh]'>
                         <Input placeholder='Search for friends' />
                         <div className='h-full overflow-y-scroll no-scrollbar'>
-                            {conversations.map((c: any) => (
+                            {sortedConversations.map((c: any) => (
                                 <div key={c.id} onClick={() => setCurrentChat(c)}>
                                     <Conversation currentChat={currentChat} conversation={c} currentUser={currentUser} />
                                 </div>
