@@ -14,6 +14,7 @@ const Actions = ({
     setCommentCount,
     likeCount,
     author,
+    handleNotification,
 }: {
     id: string;
     likes: string[];
@@ -21,6 +22,7 @@ const Actions = ({
     setCommentCount: Dispatch<SetStateAction<number>>;
     likeCount: number;
     author: Author;
+    handleNotification: (senderId: string, receiverId: string) => void;
 }) => {
     const { currentUser } = useUser();
     const [isSaved, setIsSaved] = useState<boolean>(false);
@@ -30,6 +32,9 @@ const Actions = ({
     const handleLikeButtonClick = async () => {
         try {
             await axios.patch(`/api/posts/${isLiked ? 'dislike' : 'like'}/${id}`);
+            if (!isLiked) {
+                handleNotification(currentUser!.userId, author.userId);
+            }
             setIsLiked((prevIsLiked) => !prevIsLiked);
             setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
         } catch (error) {
@@ -57,6 +62,7 @@ const Actions = ({
                     author={author}
                     isSaved={isSaved}
                     setIsSaved={setIsSaved}
+                    handleNotification={handleNotification}
                 />
                 <Share />
             </div>

@@ -25,6 +25,7 @@ const Comment = ({
     author,
     isSaved,
     setIsSaved,
+    handleNotification,
 }: {
     postId: string;
     setCommentCount: Dispatch<SetStateAction<number>>;
@@ -34,6 +35,7 @@ const Comment = ({
     author: Author;
     isSaved: boolean;
     setIsSaved: Dispatch<SetStateAction<boolean>>;
+    handleNotification: (senderId: string, receiverId: string) => void;
 }) => {
     const [post, setPost] = useState<PostProps>();
     const [comments, setComments] = useState<CommentResponse[]>();
@@ -148,7 +150,12 @@ const Comment = ({
                             <span className='text-sm text-muted-foreground mb-3'>{timeAgo}</span>
                             <Separator />
                             <div className='w-full mt-4'>
-                                <AddCommentForm getComments={getComments} postId={postId} />
+                                <AddCommentForm
+                                    getComments={getComments}
+                                    postId={postId}
+                                    postAuthorId={post && post.author.userId ? post.author.userId : ''}
+                                    handleNotification={handleNotification}
+                                />
                             </div>
                         </div>
                     </div>
