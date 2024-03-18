@@ -16,15 +16,25 @@ const Message = ({ message, own }: { message: IMessage; own: boolean }) => {
         <div className={`flex flex-col mt-20 ${own ? 'items-end' : ''}`}>
             <div className={`flex gap-2 w-full ${own ? 'flex-row' : 'flex-row-reverse'} `}>
                 <div className={`flex flex-col ${own ? 'items-start' : 'items-end'}`}>
-                    <p
-                        className={`p-3 max-w-xs ${
-                            own
-                                ? 'rounded-tr-2xl rounded-br-2xl rounded-bl-2xl bg-secondary'
-                                : 'rounded-tr-2xl rounded-bl-2xl rounded-tl-2xl bg-transparent border'
-                        }`}
-                    >
-                        {message.text}
-                    </p>
+                    {message.imageUrl && (
+                        <img
+                            className='rounded-xl'
+                            src={message.imageUrl}
+                            alt={`image`}
+                            style={{ objectFit: 'cover', width: '60%' }}
+                        />
+                    )}
+                    {message.text && (
+                        <p
+                            className={`p-3 max-w-xs ${
+                                own
+                                    ? 'rounded-tr-2xl rounded-br-2xl rounded-bl-2xl bg-secondary'
+                                    : 'rounded-tr-2xl rounded-bl-2xl rounded-tl-2xl bg-transparent border'
+                            }`}
+                        >
+                            {message?.text}
+                        </p>
+                    )}
                     <div className='text-sm mt-2'>{timeAgo}</div>
                 </div>
             </div>

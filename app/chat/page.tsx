@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
-import React, { MouseEvent, Ref, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import noMessagesBg from '@/public/no-message.svg';
 import { useUser } from '@/context/userContext';
 import axios from 'axios';
@@ -21,9 +21,13 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { useForm } from 'react-hook-form';
 import { MessageValidation } from '@/lib/validation';
 import { Socket, io } from 'socket.io-client';
+import { ImagePlus } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/use-toast';
+import { CldUploadWidget } from 'next-cloudinary';
 
 const ChatPage = () => {
-    const [conversations, setConversations] = useState([]);
+    const [conversations, setConversations] = useState<any>([]);
     const [currentChat, setCurrentChat] = useState<CurrentChat | null>(null);
     const [messages, setMessages] = useState<IMessage[] | []>([]);
     const [arrivalMessage, setArrivalMessage] = useState<any>(null);
@@ -32,6 +36,8 @@ const ChatPage = () => {
     const { currentUser } = useUser();
     const scrollRef: any = useRef();
     const router = useRouter();
+
+    const [imageUrl, setImageUrl] = useState<string>();
 
     useEffect(() => {
         if (!currentUser) {
@@ -44,10 +50,26 @@ const ChatPage = () => {
     useEffect(() => {
         socket.current = io('wss://xsocial.dev/chat');
         socket.current.on('getMessage', (data) => {
-            setArrivalMessage({
+            const arrivalMessage = {
                 sender: data.senderId,
                 text: data.text,
+                conversationId: data.conversationId,
                 createdAt: Date.now(),
+            };
+
+            setArrivalMessage(arrivalMessage);
+
+            setConversations((prevConversations: any) => {
+                return prevConversations.map((conversation: any) => {
+                    if (conversation.id === arrivalMessage.conversationId) {
+                        return {
+                            ...conversation,
+                            recentMessage: arrivalMessage.text,
+                            updatedAt: new Date(),
+                        };
+                    }
+                    return conversation;
+                });
             });
         });
     }, []);
@@ -100,11 +122,12 @@ const ChatPage = () => {
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof MessageValidation>) {
-        const sendMessge = async () => {
+        const sendMessage = async () => {
             const message = {
                 sender: currentUser?.userId,
                 text: values.text,
                 conversationId: currentChat?.id,
+                imageUrl: imageUrl,
             };
 
             const receiverId = currentChat?.members?.find((m) => m !== currentUser?.userId);
@@ -112,24 +135,58 @@ const ChatPage = () => {
             socket.current?.emit('sendMessage', {
                 senderId: currentUser?.userId,
                 receiverId,
+                imageUrl: imageUrl,
                 text: values.text,
+                conversationId: currentChat?.id,
+            });
+
+            // Update existing conversation with new message details
+            setConversations((prevConversations: any) => {
+                return prevConversations.map((conversation: any) => {
+                    if (conversation.id === message.conversationId) {
+                        return {
+                            ...conversation,
+                            recentMessage: message.text,
+                            updatedAt: new Date(),
+                        };
+                    }
+                    return conversation;
+                });
             });
 
             try {
                 const { data } = await axios.post('/api/chat/message', message);
                 setMessages([...messages, data]);
                 form.setValue('text', '');
+                setImageUrl('');
             } catch (error) {
                 console.log(error);
             }
         };
 
-        sendMessge();
+        sendMessage();
     }
 
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    const sortedConversations = conversations.slice().sort((a: any, b: any) => {
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
+
+    const onUploadSuccessHandler = useCallback((response: any, { widget }: any) => {
+        const croppedImageUrl = response?.info?.secure_url;
+        setImageUrl(croppedImageUrl);
+        widget.close();
+    }, []);
+
+    const onUploadErrorHandler = useCallback((error: any) => {
+        toast({
+            title: 'Error uploading Image',
+            description: 'try again later',
+        });
+    }, []);
 
     return (
         currentUser && (
@@ -138,7 +195,7 @@ const ChatPage = () => {
                     <div className='p-3 h-[80vh]'>
                         <Input placeholder='Search for friends' />
                         <div className='h-full overflow-y-scroll no-scrollbar'>
-                            {conversations.map((c: any) => (
+                            {sortedConversations.map((c: any) => (
                                 <div key={c.id} onClick={() => setCurrentChat(c)}>
                                     <Conversation currentChat={currentChat} conversation={c} currentUser={currentUser} />
                                 </div>
@@ -162,24 +219,55 @@ const ChatPage = () => {
                                         onSubmit={form.handleSubmit(onSubmit)}
                                         className='flex flex-col gap-4 w-full max-w-5xl'
                                     >
-                                        <FormField
-                                            control={form.control}
-                                            name='text'
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <Textarea
-                                                            className='w-full'
-                                                            placeholder='Write something...'
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
+                                        <div className='flex gap-2 justify-center items-center'>
+                                            {imageUrl && (
+                                                <img
+                                                    src={imageUrl}
+                                                    alt={`image`}
+                                                    style={{ objectFit: 'cover', width: '40px', height: '40px' }}
+                                                />
                                             )}
-                                        />
+                                            <div className='flex-grow'>
+                                                <FormField
+                                                    control={form.control}
+                                                    name='text'
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormControl className='relative'>
+                                                                <Textarea
+                                                                    className='w-full pr-10'
+                                                                    placeholder='Write something...'
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                            <CldUploadWidget
+                                                uploadPreset='xsocial_messages'
+                                                options={{
+                                                    multiple: false,
+                                                    resourceType: 'image',
+                                                }}
+                                                onSuccess={onUploadSuccessHandler}
+                                                onError={onUploadErrorHandler}
+                                            >
+                                                {({ open }) => (
+                                                    <div className='flex flex-col items-center justify-center'>
+                                                        <ImagePlus onClick={(event) => open()} />
+                                                    </div>
+                                                )}
+                                            </CldUploadWidget>
+                                        </div>
 
-                                        <Button className='px-4 py-2 rounded-md'>Send</Button>
+                                        <Button
+                                            disabled={!imageUrl && !form.getValues().text ? true : false}
+                                            className='px-4 py-2 rounded-md'
+                                        >
+                                            Send
+                                        </Button>
                                     </form>
                                 </Form>
                             </div>
@@ -190,7 +278,7 @@ const ChatPage = () => {
                         </div>
                     )}
                 </div>
-                <div className='flex-[2] border-l'>
+                <div className='flex-[2] border-l hidden sm:block'>
                     <div className='h-screen p-3'>
                         <ChatOnline
                             onlineUsers={onlineUsers}

@@ -44,9 +44,8 @@ const EditPostForm = () => {
     const form = useForm<z.infer<typeof PostValidation>>({
         resolver: zodResolver(PostValidation),
         defaultValues: {
-            caption: '', // Assuming caption is a string
-            files: [],
-            tags: '', // Assuming tags are a string of comma-separated values
+            caption: '',
+            tags: '',
         },
     });
 
@@ -75,7 +74,6 @@ const EditPostForm = () => {
             });
             router.push('/home');
         },
-        contentType: 'multipart/form-data',
     });
     return (
         <Form {...form}>
