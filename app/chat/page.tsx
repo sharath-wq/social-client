@@ -246,7 +246,7 @@ const ChatPage = () => {
                                                 />
                                             </div>
                                             <CldUploadWidget
-                                                uploadPreset='xsocial_posts'
+                                                uploadPreset='xsocial_messages'
                                                 options={{
                                                     multiple: false,
                                                     resourceType: 'image',
@@ -278,7 +278,7 @@ const ChatPage = () => {
                         </div>
                     )}
                 </div>
-                <div className='flex-[2] border-l'>
+                <div className='flex-[2] border-l hidden sm:block'>
                     <div className='h-screen p-3'>
                         <ChatOnline
                             onlineUsers={onlineUsers}
