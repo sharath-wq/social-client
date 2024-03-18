@@ -40,7 +40,7 @@ const Conversation = ({
             </Avatar>
             <div className='flex flex-col'>
                 <span className='font-bold ml-5'>{user?.username}</span>
-                <span className='font-light ml-5'>{conversation?.recentMessage}</span>
+                <span className='font-light ml-5'>{conversation.recentMessage ? conversation.recentMessage : 'Image'}</span>
             </div>
         </div>
     );

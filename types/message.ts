@@ -10,6 +10,7 @@ export type IMessage = {
     conversationId: string;
     createdAt: Date;
     sender: string;
-    text: string;
+    text?: string;
+    imageUrl?: string;
     updatedAt: Date;
 };
