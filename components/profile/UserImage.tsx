@@ -9,9 +9,10 @@ import { ButtonLoading } from '../button/LoadingButton';
 type UserImageProps = {
     username: string;
     imageUrl: string;
+    own: boolean;
 };
 
-const UserImage = ({ username, imageUrl }: UserImageProps) => {
+const UserImage = ({ username, imageUrl, own }: UserImageProps) => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isSubmiting, setIsSubmiting] = useState(false);
@@ -69,29 +70,31 @@ const UserImage = ({ username, imageUrl }: UserImageProps) => {
                 <AvatarFallback>{username[0]}</AvatarFallback>
             </Avatar>
 
-            <form onSubmit={handleSubmit} className='flex flex-col gap-4 w-full max-w-5xl'>
-                <input
-                    name='file'
-                    type='file'
-                    accept='image/*'
-                    ref={fileInputRef}
-                    onChange={handleImageChange}
-                    style={{ display: 'none' }}
-                />
+            {own && (
+                <form onSubmit={handleSubmit} className='flex flex-col gap-4 w-full max-w-5xl'>
+                    <input
+                        name='file'
+                        type='file'
+                        accept='image/*'
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        style={{ display: 'none' }}
+                    />
 
-                <Button variant={'outline'} className='mt-2 p-2 cursor-pointer' onClick={handleEditButtonClick}>
-                    Change Image
-                </Button>
+                    <Button variant={'outline'} className='mt-2 p-2 cursor-pointer' onClick={handleEditButtonClick}>
+                        Change Image
+                    </Button>
 
-                {selectedImage &&
-                    (isSubmiting ? (
-                        <ButtonLoading />
-                    ) : (
-                        <Button variant={'outline'} className='p-2 cursor-pointer' type='submit'>
-                            Update Image
-                        </Button>
-                    ))}
-            </form>
+                    {selectedImage &&
+                        (isSubmiting ? (
+                            <ButtonLoading />
+                        ) : (
+                            <Button variant={'outline'} className='p-2 cursor-pointer' type='submit'>
+                                Update Image
+                            </Button>
+                        ))}
+                </form>
+            )}
         </div>
     );
 };
