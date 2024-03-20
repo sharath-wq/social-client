@@ -15,6 +15,8 @@ import TimeAgo from 'react-timeago';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useUser } from '@/context/userContext';
 import Save from '../save/Save';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { Card, CardContent } from '@/components/ui/card';
 
 const Comment = ({
     postId,
@@ -26,6 +28,9 @@ const Comment = ({
     isSaved,
     setIsSaved,
     handleNotification,
+    imageUrls,
+    caption,
+    tags,
 }: {
     postId: string;
     setCommentCount: Dispatch<SetStateAction<number>>;
@@ -36,9 +41,17 @@ const Comment = ({
     isSaved: boolean;
     setIsSaved: Dispatch<SetStateAction<boolean>>;
     handleNotification: (senderId: string, receiverId: string) => void;
+    imageUrls: string[];
+    caption: string;
+    tags: string[];
 }) => {
     const [post, setPost] = useState<PostProps>();
     const [comments, setComments] = useState<CommentResponse[]>();
+    const [expanded, setExpanded] = useState(false);
+
+    const toggleExpand = () => {
+        setExpanded(!expanded);
+    };
 
     const { currentUser } = useUser();
 
@@ -88,8 +101,44 @@ const Comment = ({
                 </Button>
             </DialogTrigger>
             <DialogContent className='h-[90%] w-full max-w-screen-xl flex'>
-                <div className='w-1/2'>
-                    <img src={post?.imageUrls[0]} alt='Post Image' className='w-full h-full object-cover' />
+                <div className='w-1/2 flex flex-col'>
+                    <Carousel className='w-full flex-grow'>
+                        <CarouselContent>
+                            {Array.from({ length: imageUrls?.length }).map((_, index) => (
+                                <CarouselItem key={index}>
+                                    <div className='p-1'>
+                                        <Card>
+                                            <CardContent className='flex aspect-square items-center justify-center p-6'>
+                                                <img
+                                                    src={imageUrls[index]}
+                                                    alt={`image-${index}`}
+                                                    style={{ objectFit: 'fill', width: '100%', height: '100%' }}
+                                                />
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                    </Carousel>
+
+                    <div className='flex mb-20 w-full ml-8 flex-col items-start'>
+                        {caption && (
+                            <div className='flex'>
+                                <p
+                                    onClick={toggleExpand}
+                                    className={`leading-7 ${
+                                        !expanded ? 'line-clamp-2' : ''
+                                    } [&:not(:first-child)]:mt-6 transition-all duration-300 animate-expand-collapse`}
+                                >
+                                    <span className='text-lg font-semibold'>{author.username}</span> {caption}
+                                </p>
+                            </div>
+                        )}
+                        {tags && tags.length !== 0 && (
+                            <p className='text-sm text-muted-foreground'>{tags && tags.map((tag: string) => tag)}</p>
+                        )}
+                    </div>
                 </div>
 
                 <div className='w-1/2'>

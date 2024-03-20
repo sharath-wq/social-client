@@ -15,6 +15,10 @@ const Actions = ({
     likeCount,
     author,
     handleNotification,
+    caption,
+    commentCount,
+    imageUrls,
+    tags,
 }: {
     id: string;
     likes: string[];
@@ -23,6 +27,10 @@ const Actions = ({
     likeCount: number;
     author: Author;
     handleNotification: (senderId: string, receiverId: string) => void;
+    caption: string;
+    commentCount: number;
+    imageUrls: string[];
+    tags: string[];
 }) => {
     const { currentUser } = useUser();
     const [isSaved, setIsSaved] = useState<boolean>(false);
@@ -54,6 +62,9 @@ const Actions = ({
                     likes={likes}
                 />
                 <Comment
+                    caption={caption}
+                    imageUrls={imageUrls}
+                    tags={tags}
                     handleLikeButtonClick={handleLikeButtonClick}
                     isLiked={isLiked}
                     setCommentCount={setCommentCount}
