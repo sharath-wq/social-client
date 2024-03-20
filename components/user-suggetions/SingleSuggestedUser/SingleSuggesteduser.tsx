@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/userContext';
 import axios from 'axios';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 const SingleSuggesteduser = ({
@@ -47,10 +48,12 @@ const SingleSuggesteduser = ({
                 <AvatarImage src={imageUrl} alt={username} />
                 <AvatarFallback>{username.split('')[0]}</AvatarFallback>
             </Avatar>
-            <div className='flex flex-col'>
-                <span className='text-base'>{username}</span>
-                <span className='text-xs'>{fullName}</span>
-            </div>
+            <Link href={`/user/${id}`}>
+                <div className='flex flex-col'>
+                    <span className='text-base'>{username}</span>
+                    <span className='text-xs'>{fullName}</span>
+                </div>
+            </Link>
             <Button onClick={handleClick} className='ml-auto' variant={'outline'}>
                 {isFollowing ? 'unfollow' : 'follow'}
             </Button>

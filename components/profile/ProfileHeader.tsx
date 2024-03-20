@@ -18,6 +18,7 @@ type ProfileHeaderProps = {
     following: string[];
     followers: string[];
     email: string;
+    handleNotification?: (senderId: string, receiverId: string) => void;
 };
 
 const ProfileHeader = ({
@@ -31,6 +32,7 @@ const ProfileHeader = ({
     followers,
     following,
     email,
+    handleNotification,
 }: ProfileHeaderProps) => {
     const editUserData = {
         username,
@@ -53,9 +55,9 @@ const ProfileHeader = ({
                 description: `${isFollowing ? 'unfollowed' : 'followed'}`,
             });
 
-            // if (!isFollowing) {
-            //     handleNotification(currentUser!.userId, id);
-            // }
+            if (!isFollowing) {
+                handleNotification && handleNotification(currentUser!.userId, id);
+            }
 
             setIsFollowing((prev) => !prev);
         } catch (error) {

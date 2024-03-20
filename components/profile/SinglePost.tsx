@@ -29,6 +29,7 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { CopyIcon } from 'lucide-react';
+import Image from 'next/image';
 
 const SinglePost = ({
     imageUrl,
@@ -63,7 +64,14 @@ const SinglePost = ({
             <ContextMenuTrigger>
                 <div className='p-4 rounded-md'>
                     <Link href={`/post/view/${id}`}>
-                        <img src={imageUrl} alt='Post' className='w-full h-60 object-contain mb-4 rounded-md' />
+                        <Image
+                            objectFit='contain'
+                            width={100}
+                            height={100}
+                            src={imageUrl}
+                            alt='Post'
+                            className='w-full h-60 object-contain mb-4 rounded-md'
+                        />
                     </Link>
                 </div>
             </ContextMenuTrigger>
