@@ -3,7 +3,6 @@
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import { Separator } from '@/components/ui/separator';
 import React, { useEffect, useState } from 'react';
-import UserPosts from '@/components/profile/UserPosts';
 import axios, { AxiosError } from 'axios';
 import { useUser } from '@/context/userContext';
 import ProfileHeaderSkelton from '@/components/Skeltons/profile/ProfileHeaderSkelton';
@@ -11,7 +10,6 @@ import PostsGridSkeleton from '@/components/Skeltons/profile/PostsGridSkelton';
 import { UserData } from '@/types/user';
 import { PostData, UserPostData } from '@/types/post';
 import { useRouter } from 'next/navigation';
-import { Tabs } from '@/components/ui/tabs';
 import ProfileTabs from '@/components/profile/tabs/ProfileTabs';
 
 const ProfilePage = () => {
@@ -65,7 +63,7 @@ const ProfilePage = () => {
     return (
         <div className='flex justify-center mt-20 h-screen '>
             <div className='w-3/4 flex flex-col gap-10'>
-                {userData ? <ProfileHeader {...userData} /> : <ProfileHeaderSkelton />}
+                {userData ? <ProfileHeader own={true} {...userData} /> : <ProfileHeaderSkelton />}
                 <Separator className='mt-4 mb-2' />
                 {userPostsData ? (
                     <ProfileTabs

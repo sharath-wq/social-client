@@ -17,7 +17,7 @@ const Notification = ({ notification }: { notification: INotification }) => {
 
     return (
         <div className='flex gap-2 justify-between'>
-            <div className='flex gap-5'>
+            <Link href={`/user/${notification.senderId}`} className='flex gap-5'>
                 <Avatar className='w-12 h-12'>
                     <AvatarImage src={notification.sender.imageUrl} alt='@shadcn' />
                     <AvatarFallback>{notification.sender.username.split('')[0]}</AvatarFallback>
@@ -29,7 +29,7 @@ const Notification = ({ notification }: { notification: INotification }) => {
                     </CardTitle>
                     <CardDescription>{timeAgo}</CardDescription>
                 </div>
-            </div>
+            </Link>
             <div>
                 {notification.type !== 'Follow' && (
                     <Link href={`/post/view/${notification.postId}`}>

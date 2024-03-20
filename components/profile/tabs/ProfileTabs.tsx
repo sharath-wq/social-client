@@ -26,7 +26,7 @@ const ProfileTabs = ({
                     <TabsTrigger value='savedPosts'>Saved Posts</TabsTrigger>
                 </TabsList>
                 <TabsContent value='myPosts'>
-                    <UserPosts fetchUserPosts={fetchUserPosts} posts={userPostsData} />
+                    <UserPosts own={true} fetchUserPosts={fetchUserPosts} posts={userPostsData} />
                 </TabsContent>
                 <TabsContent value='savedPosts'>
                     <SavedPosts fetchUserSavedPosts={fetchSavedPosts} savedPosts={savedPosts} />
