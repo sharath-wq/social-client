@@ -13,3 +13,10 @@ export const reasonsToReport = [
     'Child exploitation or abuse',
     "I just don't like it",
 ];
+
+export const reasonsToReportUser = [
+    'Harassment or Bullying',
+    'Spam or Scams',
+    'Inappropriate Content',
+    'It may have been hacked',
+];

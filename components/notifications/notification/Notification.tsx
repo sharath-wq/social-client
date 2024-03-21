@@ -33,7 +33,7 @@ const Notification = ({ notification }: { notification: INotification }) => {
             <div>
                 {notification.type !== 'Follow' && (
                     <Link href={`/post/view/${notification.postId}`}>
-                        <img className='w-12 h-12 object-contain' src={notification.post.imageUrls[0]} alt='' />
+                        <img className='w-12 h-12 object-contain' src={notification?.post?.imageUrls[0]} alt='' />
                     </Link>
                 )}
             </div>

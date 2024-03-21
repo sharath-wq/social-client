@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import UserImage from '@/components/profile/UserImage';
 import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
+import { AlertCircle, Settings, X } from 'lucide-react';
 import EditProfile from '@/components/profile/EditProfile';
 import { useUser } from '@/context/userContext';
 import axios from 'axios';
 import { toast } from '../ui/use-toast';
+import {
+    AlertDialog,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+    AlertDialogCancel,
+    AlertDialogAction,
+} from '../ui/alert-dialog';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { reasonsToReportUser } from '@/constants';
+import { Separator } from '../ui/separator';
 
 type ProfileHeaderProps = {
     id: string;
@@ -65,6 +78,26 @@ const ProfileHeader = ({
         }
     };
 
+    const hanldeReport = async (reason: string) => {
+        try {
+            await axios.post(`/api/users/reports`, {
+                userId: id,
+                reporterId: currentUser?.userId,
+                reason: reason,
+            });
+            toast({
+                title: 'Reported',
+                description: `User Reported with the reason ${reason}`,
+            });
+        } catch (error: any) {
+            console.log(error);
+            toast({
+                title: 'Error reporting post',
+                description: `${error}`,
+            });
+        }
+    };
+
     return (
         <div className='flex p-4'>
             <div className='flex items-center'>
@@ -81,9 +114,51 @@ const ProfileHeader = ({
                             <Settings />
                         </Button>
                     ) : (
-                        <Button onClick={handleClick} className='ml-auto' variant={'secondary'}>
-                            {isFollowing ? 'unfollow' : 'follow'}
-                        </Button>
+                        <div className='flex gap-2'>
+                            <Button onClick={handleClick} className='ml-auto' variant={'secondary'}>
+                                {isFollowing ? 'unfollow' : 'follow'}
+                            </Button>
+
+                            <AlertDialog>
+                                <AlertDialogTrigger className='flex justify-between' asChild>
+                                    <Button variant='destructive' onClick={(e) => e.stopPropagation()}>
+                                        Report
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <div className='flex justify-between'>
+                                            <AlertDialogTitle>Report</AlertDialogTitle>
+                                            <AlertDialogCancel className='justify-end'>
+                                                <X />
+                                            </AlertDialogCancel>
+                                        </div>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <ScrollArea className='h-auto w-full rounded-md border'>
+                                            <div className='p-4'>
+                                                {reasonsToReportUser.map((reason, _) => (
+                                                    <>
+                                                        <div key={reason} className='text-base flex justify-between'>
+                                                            {reason}
+                                                            <AlertDialogAction>
+                                                                <AlertCircle
+                                                                    onClick={() => hanldeReport(reason)}
+                                                                    className='cursor-pointer'
+                                                                />
+                                                            </AlertDialogAction>
+                                                        </div>
+                                                        {_ < reasonsToReportUser.length - 1 && (
+                                                            <Separator className='my-3' />
+                                                        )}
+                                                    </>
+                                                ))}
+                                            </div>
+                                        </ScrollArea>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
                     )}
                 </div>
                 <span className='text-md font-normal mb-2 md:mb-0'>{fullName}</span>
