@@ -19,7 +19,7 @@ const Conversation = ({
     const userID = currentUser!.userId.toString();
     const userName = 'userName' + userID;
     const appID = 850377586;
-    const serverSecret = 'c4f8171f2d9dc46aa5c4b9608eb79f14';
+    const serverSecret = process.env.ZEGO_CLOUD_SERVER_SECRET!;
     const TOKEN = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, currentUser!.userId, userID, userName);
 
     const zp = ZegoUIKitPrebuilt.create(TOKEN);
