@@ -22,7 +22,6 @@ import { useForm } from 'react-hook-form';
 import { MessageValidation } from '@/lib/validation';
 import { Socket, io } from 'socket.io-client';
 import { ImagePlus } from 'lucide-react';
-import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 import { CldUploadWidget } from 'next-cloudinary';
 
