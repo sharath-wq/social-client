@@ -10,7 +10,7 @@ import { Heart } from 'lucide-react';
 import React, { useState } from 'react';
 import TimeAgo from 'react-timeago';
 
-const SingleComment = ({ author, content, createdAt, id, likes, postId, getComments }: SingleCommentProps) => {
+const SingleComment = ({ author, content, createdAt, id, likes }: SingleCommentProps) => {
     const timeDifference: number = Date.now() - new Date(createdAt).getTime();
 
     let timeAgo: string | React.ReactNode;
