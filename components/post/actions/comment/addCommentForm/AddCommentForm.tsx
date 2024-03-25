@@ -36,7 +36,11 @@ const AddCommentForm = ({
 
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof commentSchema>) {
-        doRequest(values);
+        try {
+            doRequest(values);
+        } catch (error: any) {
+            toast({ title: 'Error posting comment', description: 'Try again later' });
+        }
     }
 
     const { currentUser } = useUser();
