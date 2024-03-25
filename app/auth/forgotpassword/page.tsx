@@ -13,7 +13,6 @@ import { ButtonLoading } from '@/components/button/LoadingButton';
 import { useState } from 'react';
 import useRequest from '@/hooks/useRequest';
 import { toast } from '@/components/ui/use-toast';
-import { useRouter } from 'next/navigation';
 
 const ForgotPage: React.FC = () => {
     const [isSubmiting, setisSubmiting] = useState(false);

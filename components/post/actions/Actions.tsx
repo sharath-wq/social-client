@@ -6,6 +6,7 @@ import Save from './save/Save';
 import { useUser } from '@/context/userContext';
 import axios from 'axios';
 import { Author } from '@/types/comment';
+import { toast } from '@/components/ui/use-toast';
 
 const Actions = ({
     id,
@@ -16,7 +17,6 @@ const Actions = ({
     author,
     handleNotification,
     caption,
-    commentCount,
     imageUrls,
     tags,
 }: {
@@ -45,8 +45,9 @@ const Actions = ({
             }
             setIsLiked((prevIsLiked) => !prevIsLiked);
             setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
-        } catch (error) {
+        } catch (error: any) {
             console.log(error);
+            toast({ title: 'An Error Occured', description: error });
         }
     };
 

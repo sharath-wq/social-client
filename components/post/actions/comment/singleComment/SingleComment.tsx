@@ -1,6 +1,7 @@
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { CardDescription } from '@/components/ui/card';
+import { toast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/userContext';
 import { SingleCommentProps } from '@/types/comment';
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
@@ -36,7 +37,8 @@ const SingleComment = ({ author, content, createdAt, id, likes }: SingleCommentP
             await axios.put(`/api/comments/${isLiked ? 'dislike' : 'like'}/${id}`);
             setIsLiked((prevIsLiked) => !prevIsLiked);
             setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
-        } catch (error) {
+        } catch (error: any) {
+            toast({ title: `Error ${isLiked ? 'Disliking' : 'Liking'} the comment` });
             console.error(error);
         }
     };

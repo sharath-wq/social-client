@@ -116,8 +116,9 @@ const ChatPage = () => {
 
                 setUnreadCounts(updatedUnreadCounts);
                 setConversations(data);
-            } catch (error) {
+            } catch (error: any) {
                 console.log(error);
+                toast({ title: 'An Error Occured', description: error });
             }
         };
 
@@ -129,8 +130,9 @@ const ChatPage = () => {
             try {
                 const { data } = await axios.get(`/api/chat/message/${currentChat?.id}`);
                 setMessages(data);
-            } catch (error) {
+            } catch (error: any) {
                 console.log(error);
+                toast({ title: 'An Error Occured', description: error });
             }
         };
         getMessages();
@@ -183,8 +185,9 @@ const ChatPage = () => {
                 setMessages([...messages, data]);
                 form.setValue('text', '');
                 setImageUrl('');
-            } catch (error) {
+            } catch (error: any) {
                 console.log(error);
+                toast({ title: 'An Error Occured', description: error });
             }
         };
 
@@ -227,8 +230,9 @@ const ChatPage = () => {
             });
 
             setCurrentChat(c);
-        } catch (error) {
+        } catch (error: any) {
             console.log(error);
+            toast({ title: 'An Error Occured', description: error });
         }
     };
 

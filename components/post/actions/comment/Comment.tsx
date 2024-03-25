@@ -48,6 +48,7 @@ const Comment = ({
     const [post, setPost] = useState<PostProps>();
     const [comments, setComments] = useState<CommentResponse[]>();
     const [expanded, setExpanded] = useState(false);
+    const [error, setError] = useState('');
 
     const toggleExpand = () => {
         setExpanded(!expanded);
@@ -71,6 +72,7 @@ const Comment = ({
             setCommentCount(data.length);
         } catch (e) {
             const error = e as AxiosError;
+            setError('Error Fetching Comments.');
         }
     };
 
@@ -162,6 +164,8 @@ const Comment = ({
                                         ? comments.map((comment: CommentResponse) => (
                                               <SingleComment getComments={getComments} key={comment.id} {...comment} />
                                           ))
+                                        : error
+                                        ? error
                                         : 'No comments'}
                                 </ScrollArea>
                             </div>
