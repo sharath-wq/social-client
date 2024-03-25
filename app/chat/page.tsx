@@ -35,6 +35,7 @@ const ChatPage = () => {
     const { currentUser } = useUser();
     const scrollRef: any = useRef();
     const router = useRouter();
+    const [unreadCounts, setUnreadCounts] = useState<{ [key: string]: number }>({});
 
     const [imageUrl, setImageUrl] = useState<string>();
 
@@ -70,6 +71,21 @@ const ChatPage = () => {
                     return conversation;
                 });
             });
+
+            setUnreadCounts((prevUnreadCounts: { [conversationId: string]: number }) => {
+                const updatedUnreadCounts: { [conversationId: string]: number } = { ...prevUnreadCounts };
+
+                if (arrivalMessage) {
+                    const conversationId = arrivalMessage.conversationId;
+                    const isCurrentChat = currentChat && currentChat.id === conversationId;
+
+                    if (!isCurrentChat) {
+                        updatedUnreadCounts[conversationId] = (updatedUnreadCounts[conversationId] || 0) + 1;
+                    }
+                }
+
+                return updatedUnreadCounts;
+            });
         });
     }, []);
 
@@ -90,6 +106,15 @@ const ChatPage = () => {
         const getConversations = async () => {
             try {
                 const { data } = await axios.get(`/api/chat/conversation/${currentUser && currentUser.userId}`);
+
+                const updatedUnreadCounts: { [conversationId: string]: number } = {};
+                data.forEach((conversation: any) => {
+                    if (conversation.unreadCount) {
+                        updatedUnreadCounts[conversation.id] = conversation.unreadCount;
+                    }
+                });
+
+                setUnreadCounts(updatedUnreadCounts);
                 setConversations(data);
             } catch (error) {
                 console.log(error);
@@ -187,6 +212,26 @@ const ChatPage = () => {
         });
     }, []);
 
+    const handleCurrentChatClick = async (c: any) => {
+        try {
+            const { data } = await axios.patch(`/api/chat/message/mark-read`, {
+                cId: c.id,
+                userId: currentUser!.userId,
+            });
+
+            setUnreadCounts((prevUnreadCounts) => {
+                return {
+                    ...prevUnreadCounts,
+                    [c.id]: 0,
+                };
+            });
+
+            setCurrentChat(c);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         currentUser && (
             <div className='flex h-screen overflow-hidden'>
@@ -195,8 +240,18 @@ const ChatPage = () => {
                         <Input placeholder='Search for friends' />
                         <div className='h-full overflow-y-scroll no-scrollbar'>
                             {sortedConversations.map((c: any) => (
-                                <div key={c.id} onClick={() => setCurrentChat(c)}>
-                                    <Conversation currentChat={currentChat} conversation={c} currentUser={currentUser} />
+                                <div
+                                    key={c.id}
+                                    onClick={() => {
+                                        handleCurrentChatClick(c);
+                                    }}
+                                >
+                                    <Conversation
+                                        unreadCounts={unreadCounts[c.id]}
+                                        currentChat={currentChat}
+                                        conversation={c}
+                                        currentUser={currentUser}
+                                    />
                                 </div>
                             ))}
                         </div>
